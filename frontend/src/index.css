@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-outfit: 'Outfit', 'Inter', sans-serif;
+  }
+  
+  body {
+    background-color: #030712;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(120, 119, 198, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+    font-family: var(--font-outfit);
+    color: #f8fafc;
+    overflow-y: auto;
+  }
+
+  /* Custom Neon Scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(17, 24, 39, 0.3);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(168, 85, 247, 0.4);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(6, 182, 212, 0.6);
+  }
+}
+
+@layer components {
+  /* Premium Futuristic Glass Card */
+  .glass-card {
+    background: rgba(17, 24, 39, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+  
+  .glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .glass-card-hover:hover {
+    background: rgba(17, 24, 39, 0.7);
+    border-color: rgba(6, 182, 212, 0.3);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* Glowing Neon Buttons */
+  .btn-neon-cyan {
+    background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+    transition: all 0.2s ease-in-out;
+  }
+  .btn-neon-cyan:hover {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+    transform: scale(1.02);
+  }
+
+  .btn-neon-purple {
+    background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+    transition: all 0.2s ease-in-out;
+  }
+  .btn-neon-purple:hover {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+    transform: scale(1.02);
+  }
+
+  /* Cyber Input Fields */
+  .cyber-input {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+    transition: all 0.2s ease-in-out;
+  }
+  .cyber-input:focus {
+    outline: none;
+    border-color: #06b6d4;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+    background: rgba(15, 23, 42, 0.85);
+  }
+
+  /* Dot Grid Overlay */
+  .dot-grid {
+    background-size: 24px 24px;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+}
