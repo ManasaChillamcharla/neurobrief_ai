@@ -1,6 +1,31 @@
 const User = require('../models/User');
 const { generateToken } = require('../utils/token');
 
+const normalizeAuthInput = ({ username, email, password }) => ({
+  username: username ? username.trim() : '',
+  email: email ? email.trim().toLowerCase() : '',
+  password: password || ''
+});
+
+const sendAuthError = (res, error, fallbackMessage) => {
+  if (error.name === 'ValidationError') {
+    const message = Object.values(error.errors).map((err) => err.message).join(', ');
+    return res.status(400).json({ success: false, message });
+  }
+
+  if (error.code === 11000) {
+    const duplicateField = Object.keys(error.keyPattern || {})[0] || 'field';
+    return res.status(400).json({
+      success: false,
+      message: duplicateField === 'email'
+        ? 'A user with this email already exists'
+        : 'Username is already taken'
+    });
+  }
+
+  return res.status(500).json({ success: false, message: fallbackMessage });
+};
+
 /**
  * @desc    Register a new user
  * @route   POST /api/auth/register
@@ -8,7 +33,7 @@ const { generateToken } = require('../utils/token');
  */
 const registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password } = normalizeAuthInput(req.body);
 
     if (!username || !email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide username, email, and password' });
@@ -48,7 +73,7 @@ const registerUser = async (req, res) => {
     }
   } catch (error) {
     console.error(`[Auth Register Error] ${error.message}`);
-    res.status(500).json({ success: false, message: `Server error: ${error.message}` });
+    return sendAuthError(res, error, 'Registration failed on the server. Please check backend logs for details.');
   }
 };
 
@@ -59,7 +84,7 @@ const registerUser = async (req, res) => {
  */
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = normalizeAuthInput(req.body);
 
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Please enter both email and password' });
@@ -84,7 +109,7 @@ const loginUser = async (req, res) => {
     }
   } catch (error) {
     console.error(`[Auth Login Error] ${error.message}`);
-    res.status(500).json({ success: false, message: `Server error: ${error.message}` });
+    return sendAuthError(res, error, 'Login failed on the server. Please check backend logs for details.');
   }
 };
 

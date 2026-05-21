@@ -3,9 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
-// Initialize database connection
-connectDB();
-
 const app = express();
 
 // Express Configuration Middlewares
@@ -34,6 +31,24 @@ app.get('/api/health', (req, res) => {
     message: 'NeuroBrief AI System Backend is active and healthy.',
     timestamp: new Date()
   });
+});
+
+// Ensure database availability before protected app APIs hit controllers.
+app.use('/api', async (req, res, next) => {
+  if (req.path === '/health') {
+    return next();
+  }
+
+  try {
+    await connectDB();
+    return next();
+  } catch (error) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database connection failed. Check MONGO_URI in Vercel Environment Variables and MongoDB Atlas Network Access.',
+      detail: process.env.NODE_ENV === 'production' ? undefined : error.message
+    });
+  }
 });
 
 // Bind Controller Routers

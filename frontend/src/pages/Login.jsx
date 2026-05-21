@@ -104,6 +104,7 @@ const Login = () => {
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                     <input
                       required
+                      minLength={3}
                       type="text"
                       name="username"
                       value={formData.username}
@@ -138,6 +139,7 @@ const Login = () => {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
                   required
+                  minLength={6}
                   type="password"
                   name="password"
                   value={formData.password}
