@@ -18,6 +18,16 @@ app.use(express.json({ limit: '20mb' })); // support larger textual parsing pack
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 // Health Check API Route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    service: 'NeuroBrief AI Backend',
+    message: 'Backend is running. Use /api/health for health checks and deploy the frontend as a separate Vercel project from the frontend directory.',
+    health: '/api/health',
+    timestamp: new Date()
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
