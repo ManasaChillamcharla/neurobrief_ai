@@ -20,6 +20,15 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleUseDemo = () => {
+    setIsRegisterMode(false);
+    setFormData({
+      username: '',
+      email: 'guest@neurobrief.ai',
+      password: '123456'
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -170,11 +179,15 @@ const Login = () => {
           </form>
 
           {/* Quick Mock Credentials hint for ease of use! */}
-          <div className="mt-8 pt-6 border-t border-cyber-border flex justify-between text-[11px] text-cyber-textMuted font-medium">
+          <button
+            type="button"
+            onClick={handleUseDemo}
+            className="mt-8 pt-6 border-t border-cyber-border w-full flex justify-between text-[11px] text-cyber-textMuted hover:text-slate-200 font-medium transition-colors text-left"
+          >
             <span>Demo Portal:</span>
             <span>Email: guest@neurobrief.ai</span>
             <span>Pass: 123456</span>
-          </div>
+          </button>
 
         </div>
       </motion.div>

@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
     service: 'NeuroBrief AI Backend',
     message: 'Backend is running. Use /api/health for health checks and deploy the frontend as a separate Vercel project from the frontend directory.',
     health: '/api/health',
+    databaseHealth: '/api/health/db',
     timestamp: new Date()
   });
 });
@@ -33,9 +34,29 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.get('/api/health/db', async (req, res) => {
+  try {
+    const connection = await connectDB();
+    res.json({
+      success: true,
+      message: 'Database connection is healthy.',
+      host: connection.host,
+      database: connection.name,
+      timestamp: new Date()
+    });
+  } catch (error) {
+    res.status(503).json({
+      success: false,
+      message: 'Database connection failed. Local MongoDB Compass cannot be used by Vercel; use MongoDB Atlas or another hosted MongoDB URL for production.',
+      detail: process.env.NODE_ENV === 'production' ? undefined : error.message,
+      timestamp: new Date()
+    });
+  }
+});
+
 // Ensure database availability before protected app APIs hit controllers.
 app.use('/api', async (req, res, next) => {
-  if (req.path === '/health') {
+  if (req.path === '/health' || req.path === '/health/db') {
     return next();
   }
 

@@ -56,6 +56,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       const msg = error.response?.data?.message || 'Access denied. Please check credentials.';
+      console.error('[AuthContext] Login failed:', error.response?.data || error.message);
       toast.error(msg);
       return false;
     } finally {
@@ -78,6 +79,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       const msg = error.response?.data?.message || 'Registration failed. Try again.';
+      console.error('[AuthContext] Registration failed:', error.response?.data || error.message);
       toast.error(msg);
       return false;
     } finally {

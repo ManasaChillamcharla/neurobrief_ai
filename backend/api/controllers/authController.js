@@ -1,11 +1,38 @@
 const User = require('../models/User');
 const { generateToken } = require('../utils/token');
 
+const DEMO_USER = {
+  username: 'guest',
+  email: 'guest@neurobrief.ai',
+  password: '123456'
+};
+
 const normalizeAuthInput = ({ username, email, password }) => ({
   username: username ? username.trim() : '',
   email: email ? email.trim().toLowerCase() : '',
   password: password || ''
 });
+
+const buildAuthPayload = (user, message) => ({
+  success: true,
+  message,
+  token: generateToken(user._id),
+  user: {
+    id: user._id,
+    username: user.username,
+    email: user.email
+  }
+});
+
+const getOrCreateDemoUser = async () => {
+  let user = await User.findOne({ email: DEMO_USER.email });
+
+  if (!user) {
+    user = await User.create(DEMO_USER);
+  }
+
+  return user;
+};
 
 const sendAuthError = (res, error, fallbackMessage) => {
   if (error.name === 'ValidationError') {
@@ -58,16 +85,7 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
-      res.status(201).json({
-        success: true,
-        message: 'Registration successful',
-        token: generateToken(user._id),
-        user: {
-          id: user._id,
-          username: user.username,
-          email: user.email
-        }
-      });
+      res.status(201).json(buildAuthPayload(user, 'Registration successful'));
     } else {
       res.status(400).json({ success: false, message: 'Invalid user data provided' });
     }
@@ -90,20 +108,14 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please enter both email and password' });
     }
 
-    // Find user by email
-    const user = await User.findOne({ email });
+    // Find user by email. Demo account is auto-seeded on first use.
+    const isDemoLogin = email === DEMO_USER.email && password === DEMO_USER.password;
+    const user = isDemoLogin
+      ? await getOrCreateDemoUser()
+      : await User.findOne({ email });
 
     if (user && (await user.comparePassword(password))) {
-      res.json({
-        success: true,
-        message: 'Login successful',
-        token: generateToken(user._id),
-        user: {
-          id: user._id,
-          username: user.username,
-          email: user.email
-        }
-      });
+      res.json(buildAuthPayload(user, isDemoLogin ? 'Demo access granted' : 'Login successful'));
     } else {
       res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
